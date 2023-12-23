@@ -144,5 +144,3 @@ if __name__ == "__main__":
        batch_size = 64, epochs = 25,
        validation_split = .05,
        callbacks = [checkpoint])
-
-    print("executed successfully.")

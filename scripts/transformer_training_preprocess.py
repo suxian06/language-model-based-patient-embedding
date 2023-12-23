@@ -1,32 +1,18 @@
 """
 This script contains code used for constructing the transformer model to perform
 the embedding for patient visits within a year.
+
+This preprocessing includes:
+1. padding sequence (L=250) with the zero token.
+2. remove sparse training data (code less than 5, meaning a sequence with lengths
+less than 5)
 """
 
 # import os
 #
 import numpy as np
 import json
-# import pandas as pd
-# import matplotlib.pyplot as plt
-# import scipy.stats as sp
-# import seaborn as sns
-#
-# import sklearn
-# import tensorflow as tf
-# import matplotlib.pyplot as plt
-# import tensorflow.keras as keras
-# from tensorflow.keras.optimizers import Adam
-# from tensorflow.keras import layers
-# import scipy.sparse as sparse
-# from sklearn.model_selection import train_test_split
-# from sklearn.preprocessing import OneHotEncoder
-#
-# gpus = tf.config.list_physical_devices("GPU")
-# tf.config.experimental.set_memory_growth(gpus[0], True)
 
-# need patient level data
-# might be able to directly retrieve from Jarvik server
 
 with open("C:/Data/Lab/PatEmbedding/eMERGE/patient_vec_by_year.json") as f:
     patient_vec = json.load(f)

@@ -1,5 +1,8 @@
 """
-
+The patient embedding model training code.
+Some code (functions) are directly borrowed from the tensorflow website
+https://www.tensorflow.org/text/tutorials/transformer
+for reference purposes.
 """
 import os
 import numpy as np
