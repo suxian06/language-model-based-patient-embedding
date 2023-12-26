@@ -112,33 +112,11 @@ if __name__ == "__main__":
 
     # define the model
     vae, encoder, decoder = create_vae_none_sym(input_shape = 4320,
-                                            neurons = 1024,
-                                            latent_dim = 50,
-                                            lr = 1e-7)
+                                                neurons = 1024,
+                                                latent_dim = 50,
+                                                lr = 1e-7)
 
-    # load the matrix
-    wdir = "C:/Data/Lab/PatEmbedding/eMERGE/"
-    df_diags = pd.read_csv(wdir + "diags_week_mat.csv")
-    df_diags.set_index("WEEK",inplace = True)
-    df_procs = pd.read_csv(wdir + "procs_week_mat.csv",index_col=0)
-    df_meds = pd.read_csv(wdir + "meds_week_mat.csv",index_col=0)
-
-    # remove codes appeared less than 10 times
-    def remove_counts(df, n=10):
-        qual_columns = df.sum(axis=0)[df.sum(axis=0) >= 10].index.tolist()
-        return df[qual_columns]
-
-    df_diags = remove_counts(df_diags,n = 10)
-    df_procs = remove_counts(df_procs,n = 10)
-    df_meds = remove_counts(df_meds,n = 10)
-
-    mat = pd.merge(df_diags.reset_index(),df_procs.reset_index(), on = "WEEK")
-    mat = pd.merge(mat, df_meds.reset_index(), on = "WEEK", how = "outer").set_index("WEEK")
-    varname = mat.columns.tolist()
-    mat = mat.fillna(0.0).to_numpy()
-    mat = normalize(mat.T, axis=0)
-
-    print(mat.shape)
+    mat = np.load("./example_data/mat.npy")
 
     vae.fit(mat, mat,
        batch_size = 64, epochs = 25,
