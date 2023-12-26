@@ -60,7 +60,7 @@ def train_step(data, tar):
             # create by batch
             predictions = pat_embd_model([data[i,0,:,:].reshape(1,250,50),
                                           data[i,1,:,:].reshape(1,250,50)],
-                                         training = True)
+                                          training = True)
 
             # this equals stochastic gradient
             event_loss = loss_function_logits(tar[i,0].reshape(-1,1),predictions[0])
@@ -79,22 +79,21 @@ def train_step(data, tar):
 
 # functions to create random batches for training
 def create_balanced_batch_training():
-    """its too big, try randomly select 2 patients and feed to it"""
+    """randomly select 2 patients and feed to it"""
     L = len(patient_event_embd)
 
     patient_a = []
     patient_b = []
-    while (len(patient_a) < 10 or 20 < len(patient_a)) or ( len(patient_b)<10 or 20 < len(patient_b)):
+    while ( len(patient_a) < 5 ) or ( len(patient_b) < 5):
     #while (20 < len(patient_a) or len(patient_a) < 2) or (20 < len(patient_b) or len(patient_b) < 2):
         random_idx = np.random.choice(L,size=2,replace=False)
         patient_a = patient_event_embd[random_idx[0]] # list of events
         patient_b = patient_event_embd[random_idx[1]] # list of events
 
     # try this see if it can be a batch
-    patient_a = transformer.encoder(np.array(patient_a),training=False,mask=None)
-    patient_b = transformer.encoder(np.array(patient_b),training=False,mask=None)
-#     patient_a = tf.reshape(patient_a,shape=(len(patient_a),12500))
-#     patient_b = tf.reshape(patient_b,shape=(len(patient_b),12500))
+    patient_a = transformer.encoder(np.array(patient_a).reshape(1,250),training=False,mask=None)
+    patient_b = transformer.encoder(np.array(patient_b).reshape(1,250),training=False,mask=None)
+
     # create training sample pairs
     data_pair = []
     target = []
@@ -191,43 +190,12 @@ if __name__ == "__main__":
     import json
     import pickle
 
-    embd_data = np.load("C:/Data/Lab/PatEmbedding/eMERGE/model/50dim/50_dim_embedding/embds_mean.npy")
-
-    with open("C:/Data/Lab/PatEmbedding/eMERGE/model/50dim/50_dim_embedding/namelist", "rb") as fp:   # Unpickling
-        namelist = pickle.load(fp)
-
-    with open("C:/Data/Lab/PatEmbedding/eMERGE/patient_vec_by_year.json") as f:
-        patient_vec = json.load(f)
-
-    def padding_sequence(seq, MAX_LENGTH=250):
-        return seq + [0] * (MAX_LENGTH-len(seq))
-
-
-    def create_pat_vocabulary_training(patient_vec = patient_vec):
-
-        MAX_LENGTH = 250
-        tokenizer = {voc:i+1 for i,voc in enumerate(namelist)} # 0 index is for padding
-        # paired sequence (cur_event, next_event)
-        patient_event_embd = []
-        for pat in patient_vec.keys():
-            collector = []
-            for year in sorted([int(x) for x in patient_vec[pat].keys()]): # year sorted
-                events = set([ x for x in patient_vec[pat][str(year)] if x in tokenizer]) # out of voc is 0
-                if len(events) <= MAX_LENGTH:
-                    seq = [ tokenizer[x] for x in events]
-                    collector.append(padding_sequence(seq))
-                else:
-                    collector = []
-                    break # don't collect this patient, might have issues having too many events' per year
-
-            patient_event_embd.append(collector)
-
-        """every pair is a patient time sliced event"""
-        return patient_event_embd
-    patient_event_embd = create_pat_vocabulary_training()
+    embd_data = np.load("./example_data/mat_embedded.npy")
+    patient_event_embd = np.load("./example_data/train_data.npy")
 
     # load the transformer model to get the output from it
-    def load_model(savedir = "C:/Data/Lab/PatEmbedding/eMERGE/pat_embd/checkpoints/structure_L6_H_10_DIFF_2048_d200"):
+    # structure_L6_H_10_DIFF_2048_d200
+    def load_model(savedir = "C:/Data/Lab/PatEmbedding/eMERGE/pat_embd/checkpoints/testrun"):
         checkpoint_path = savedir
         optimizer = tf.keras.optimizers.Adam(1e-3, beta_1=0.9, beta_2=0.98,
                                              epsilon=1e-9)
@@ -245,8 +213,9 @@ if __name__ == "__main__":
     d_model=200, # embeddings of  feature, H
     num_heads=10, # numbers of head A
     dff=2048,
-    input_vocab_size=len(namelist),
-    embedding_matrix = np.concatenate((np.zeros(shape = (1,50)),embd_data)))
+    input_vocab_size=embd_data.shape[0],
+    embedding_matrix=np.concatenate((np.zeros(shape = (1,50)),embd_data)))
+
     load_model()
 
     # start training
@@ -257,7 +226,7 @@ if __name__ == "__main__":
                                          #clipvalue = 5.0,
                                          epsilon=1e-9)
 
-    STEP = 200
+    STEP = 100
     p = multiprocessing.Process(target=train(STEP))
     p.start()
     p.join()

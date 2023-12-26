@@ -158,7 +158,7 @@ if __name__ == "__main__":
         num_heads=10, # numbers of head A
         dff=2048,
         input_vocab_size=embd_data.shape[0],
-        embedding_matrix = np.concatenate((np.zeros(shape = (1,50)),embd_data)))
+        embedding_matrix=np.concatenate((np.zeros(shape = (1,50)),embd_data)))
 
     #data_pair = create_pat_vocabulary_training()
     #train_data = np.array([(x[0],random_mask(x[0])) for x in data_pair])
@@ -170,7 +170,7 @@ if __name__ == "__main__":
     BATCH_SIZE = 32
     train_batches = train_batches.batch(BATCH_SIZE)
 
-    EPOCHS = 10
+    EPOCHS = 50
     p = multiprocessing.Process(target=train(EPOCHS = EPOCHS))
     p.start()
     p.join()
