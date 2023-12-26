@@ -1,0 +1,24 @@
+name: language-model-env
+channels:
+  - anaconda
+  - conda-forge
+  - defaults
+dependencies:
+  - _tflow_select=2.3.0=gpu
+  - python=3.8.8
+  - tensorboard=2.4.0
+  - tensorboard-plugin-wit=1.6.0
+  - tensorflow=2.3.0
+  - tensorflow-base=2.3.0
+  - tensorflow-estimator=2.3.0=
+  - pip:
+    - numpy==1.18.5
+    - pandas==1.2.4
+    - pillow==8.2.0
+    - scikit-learn==0.24.1
+    - scipy==1.4.1
+    - seaborn==0.11.1
+    - tensorflow-gpu==2.3.0
+    - tensorflow-gpu-estimator==2.3.0
+    - tensorflow-hub==0.11.0
+prefix: C:\Software\Anaconda\envs\tf
