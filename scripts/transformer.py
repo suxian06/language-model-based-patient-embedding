@@ -22,12 +22,14 @@ from sklearn.preprocessing import OneHotEncoder
 gpus = tf.config.list_physical_devices("GPU")
 tf.config.experimental.set_memory_growth(gpus[0], True)
 
-with open("C:/Data/Lab/PatEmbedding/eMERGE/model/50dim/\
-50_dim_embedding/namelist", "rb") as fp:   # Unpickling
-    namelist = pickle.load(fp)
+# with open("C:/Data/Lab/PatEmbedding/eMERGE/model/50dim/\
+# 50_dim_embedding/namelist", "rb") as fp:   # Unpickling
+#     namelist = pickle.load(fp)
 
-embd_data = np.load("C:/Data/Lab/PatEmbedding/eMERGE/model/50dim/\
-50_dim_embedding/embds_mean.npy")
+# embd_data = np.load("C:/Data/Lab/PatEmbedding/eMERGE/model/50dim/\
+# 50_dim_embedding/embds_mean.npy")
+
+embd_data = np.load("./example_data/mat_embedded.npy")
 
 # custom learning rate, setup warmup steps
 # define loss function
@@ -155,14 +157,14 @@ if __name__ == "__main__":
         d_model=200, # embeddings of  feature, H
         num_heads=10, # numbers of head A
         dff=2048,
-        input_vocab_size=len(namelist),
+        input_vocab_size=embd_data.shape[0],
         embedding_matrix = np.concatenate((np.zeros(shape = (1,50)),embd_data)))
 
     #data_pair = create_pat_vocabulary_training()
     #train_data = np.array([(x[0],random_mask(x[0])) for x in data_pair])
 
-    train_data = np.load("C:/Data/Lab/PatEmbedding/eMERGE/pat_embd/dataset/train_data.npy")
-    train_data_input = np.load("C:/Data/Lab/PatEmbedding/eMERGE/pat_embd/dataset/train_data_input.npy")
+    train_data = np.load("./example_data/train_data.npy")
+    train_data_input = np.load("./example_data/train_data_input.npy")
 
     train_batches = tf.data.Dataset.from_tensor_slices((train_data,train_data_input))
     BATCH_SIZE = 32
