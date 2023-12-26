@@ -3,9 +3,13 @@ Code for the language-model-based-patient-embedding paper
 
 ## Get started
 if using https:
+``````
 git clone https://github.com/suxian06/language-model-based-patient-embedding.git
+``````
 or SSH:
+``````
 git@github.com:suxian06/language-model-based-patient-embedding.git
+``````
 
 ## Demo using dummy data from the example_data folder
 
